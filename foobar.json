@@ -1,0 +1,552 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Dreadnode Crucible - GRT2",
+    "description": "This is the API for Dreadnode's Crucible serving GRT2 at DEFCON 32.\n\nThis API allows users particpating in GRT2 to upload and process InspectAI logs for Bug Bounty analysis.\n\nSome useful links:\n- [InspectAI](https://github.com/swagger-api/swagger-petstore)\n- [GRT2](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)\n- [Defcon]()\n- [Dreadnode]()\n- [Crucible]()",
+    "termsOfService": "https://crucible.dreadnode.io/grt2-tos",
+    "contact": {
+      "email": "support.grt2@dreadnode.io"
+    },
+    "version": "0.0.1"
+  },
+  "externalDocs": {
+    "description": "Find out more about this API",
+    "url": "http://crucible.dreadnode.io/grt2docs"
+  },
+  "servers": [
+    {
+      "url": "https://crucible.dreadnode.io/api/v0"
+    }
+  ],
+  "tags": [
+    {
+      "name": "submission",
+      "description": "A collection of runs submitted for review",
+      "externalDocs": {
+        "description": "More ...",
+        "url": "http://crucible.dreadnode.io/grt2docs"
+      }
+    }
+  ],
+  "paths": {
+    "/submission": {
+      "post": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Create an initial submission with a run",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvalLog"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Submission created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Submission"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/submission/{submission_id}": {
+      "get": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Get run data for a submission",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Submission"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Delete/cancel the submission",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Submission deleted successfully"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Update submission commentary",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentaryUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Commentary updated successfully"
+          }
+        }
+      }
+    },
+    "/submission/{submission_id}/runs": {
+      "put": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Add additional run log",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Run added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/submission/{submission_id}/runs/{run_id}/samples": {
+      "get": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Get run samples",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sample"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/submission/{submission_id}/runs/{run_id}/raw": {
+      "get": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Download raw log",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/submission/{submission_id}/runs/{run_id}": {
+      "delete": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Delete run log",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Run log deleted successfully"
+          }
+        }
+      }
+    },
+    "/submission/{submission_id}/evidence": {
+      "put": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Upload evidence file",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Evidence file uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Evidence"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/submission/{submission_id}/evidence/{evidence_id}": {
+      "get": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Download raw evidence file",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "evidence_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "submission"
+        ],
+        "summary": "Delete evidence file",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "evidence_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Evidence file deleted successfully"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Submission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "runs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            }
+          },
+          "commentary": {
+            "type": "string"
+          }
+        }
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "samples": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sample"
+            }
+          }
+        }
+      },
+      "Sample": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "Evidence": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "filename": {
+            "type": "string"
+          }
+        }
+      },
+      "CommentaryUpdate": {
+        "type": "object",
+        "properties": {
+          "commentary": {
+            "type": "string"
+          }
+        }
+      },
+      "EvalLog": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "default": 1,
+            "description": "Eval log file format version."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "started",
+              "success",
+              "cancelled",
+              "error"
+            ],
+            "default": "success",
+            "description": "Status of evaluation (did it succeed or fail)."
+          },
+          "eval": {
+            "type": "object"
+          },
+          "plan": {
+            "type": "object"
+          },
+          "results": {
+            "type": "object"
+          },
+          "stats": {
+            "type": "object"
+          },
+          "error": {
+            "type": "object"
+          },
+          "samples": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "logging": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  }
+}
